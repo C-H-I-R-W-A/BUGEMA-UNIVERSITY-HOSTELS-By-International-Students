@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Bugema Hostels</title>
+  <style>
+    body { font-family: Arial; padding: 2rem; background: #f4f4f4; }
+    .container { max-width: 1000px; margin: auto; background: white; padding: 2rem; border-radius: 10px; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+    th { background: #1a5d1a; color: white; }
+    textarea { width: 100%; padding: 8px; }
+    button { background: #1a5d1a; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #128112; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Admin Panel - Bugema Hostels</h1>
+    <button onclick="location.href='index.html'">Back to Site</button>
+    <hr><br>
+
+    <h2>Messages</h2>
+    <div id="messages"></div>
+
+    <h2>Bookings</h2>
+    <div id="bookings"></div>
+  </div>
+
+  <script>
+    const messages = JSON.parse(localStorage.getItem('messages')) || [];
+    const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+
+    const msgDiv = document.getElementById('messages');
+    messages.forEach((m, i) => {
+      msgDiv.innerHTML += `
+        <div style="border:1px solid #ddd; padding:1rem; margin:1rem 0; border-radius:8px;">
+          <p><strong>${m.name}</strong> (${m.email}) - ${new Date(m.date).toLocaleString()}</p>
+          <p>${m.message}</p>
+          ${m.reply ? `<p><em>Reply: ${m.reply}</em></p>` : `
+          <textarea placeholder="Type reply..."></textarea>
+          <button onclick="replyMessage(${i}, this.previousElementSibling.value)">Send Reply</button>`}
+        </div>`;
+    });
+
+    function replyMessage(i, reply) {
+      if (!reply.trim()) return alert('Write a reply');
+      messages[i].reply = reply;
+      localStorage.setItem('messages', JSON.stringify(messages));
+      location.reload();
+    }
+
+    const bookDiv = document.getElementById('bookings');
+    bookings.forEach(b => {
+      bookDiv.innerHTML += `
+        <div style="border:1px solid #ddd; padding:1rem; margin:1rem 0; border-radius:8px;">
+          <p><strong>${b.fullName}</strong> (${b.user})</p>
+          <p>Gender: ${b.gender} | Nationality: ${b.nationality}</p>
+          <p>Phone: ${b.phone} | Parent: ${b.parentName} (${b.parentPhone})</p>
+          <p>Arrival: ${b.arrival} | Duration: ${b.duration}</p>
+          <p>Status: <strong>${b.status}</strong></p>
+          ${b.message ? `<p>Message: ${b.message}</p>` : ''}
+        </div>`;
+    });
+  </script>
+</body>
+</html>
